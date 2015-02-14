@@ -10,42 +10,54 @@ import UIKit
 import AVFoundation
 
 class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
-
+    
     @IBOutlet weak var messageLabel: UILabel!
     
-    var captureSession:AVCaptureSession?
-    var videoPreviewLayer:AVCaptureVideoPreviewLayer?
-    var qrCodeFrameView:UIView?
+    var videoPreviewLayer: AVCaptureVideoPreviewLayer?
+    var qrCodeFrameView: UIView?
+    
+    var codeCuptureSession: CodeCaptureSession?
+    let supportedBarCodes = [
+        AVMetadataObjectTypeQRCode,
+        AVMetadataObjectTypeCode128Code,
+        AVMetadataObjectTypeCode39Code,
+        AVMetadataObjectTypeCode93Code,
+        AVMetadataObjectTypeUPCECode,
+        AVMetadataObjectTypePDF417Code,
+        AVMetadataObjectTypeEAN13Code,
+        AVMetadataObjectTypeAztecCode
+    ]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let captureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
         var error:NSError?
-        let input: AnyObject! = AVCaptureDeviceInput.deviceInputWithDevice(captureDevice, error: &error)
-        
-        if (error != nil) {
-            println("\(error?.localizedDescription)")
-            return
+        let input = CodeCaptureSession.input(error: &error)
+        if error != nil {
+            // TODO
         }
-        
-        captureSession = AVCaptureSession()
-        captureSession?.addInput(input as AVCaptureInput)
-        
-        let captureMetadataOutput = AVCaptureMetadataOutput()
-        captureMetadataOutput.setMetadataObjectsDelegate(self, queue: dispatch_get_main_queue())
-        captureMetadataOutput.metadataObjectTypes = [AVMetadataObjectTypeQRCode]
-        captureSession?.addOutput(captureMetadataOutput)
-        
-        videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+        codeCuptureSession = CodeCaptureSession(input: input!)
+        outputForSession(codeCuptureSession!)
+        addPreviewLayerFromSession(codeCuptureSession!)
+        codeCuptureSession?.startRunning()
+        view.bringSubviewToFront(messageLabel)
+        addQRFrameView()
+    }
+    
+    func outputForSession(session: AVCaptureSession) {
+        let output = AVCaptureMetadataOutput()
+        session.addOutput(output)
+        output.setMetadataObjectsDelegate(self, queue: dispatch_get_main_queue())
+        output.metadataObjectTypes = supportedBarCodes
+    }
+    
+    func addPreviewLayerFromSession(session: AVCaptureSession) {
+        videoPreviewLayer = AVCaptureVideoPreviewLayer(session: session)
         videoPreviewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill
         videoPreviewLayer?.frame = view.layer.bounds
         view.layer.addSublayer(videoPreviewLayer)
-        
-        captureSession?.startRunning()
-        
-        view.bringSubviewToFront(messageLabel)
-        
+    }
+    
+    func addQRFrameView() {
         qrCodeFrameView = UIView()
         qrCodeFrameView?.layer.borderColor = UIColor.greenColor().CGColor
         qrCodeFrameView?.layer.borderWidth = 2
@@ -57,54 +69,40 @@ class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
     
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
         
-        if metadataObjects == nil || metadataObjects.count == 0 {
-            qrCodeFrameView?.frame = CGRectZero
-            messageLabel.text = "No QR code is detected"
-            return
+        if isOutputMetadataObjects(metadataObjects) == true {
+//            println("metadataObjects \(metadataObjects.count)")
+            let metadataObject = metadataObjects[0] as AVMetadataMachineReadableCodeObject
+            outputMetadataObject(metadataObject)
         }
+    }
+    
+    func isOutputMetadataObjects(metadataObjects: [AnyObject]!) -> Bool {
+        if metadataObjects != nil && metadataObjects.count > 0 {
+            println("true")
+            return true
+        }
+        qrCodeFrameView?.frame = CGRectZero
+        messageLabel.text = "No QR code is detected"
+        messageLabel.backgroundColor = UIColor.redColor().colorWithAlphaComponent(0.9)
+        println("false")
+        return false
+    }
+    
+    func outputMetadataObject(metadataObject: AVMetadataMachineReadableCodeObject) {
         
-        let metadataObj = metadataObjects[0] as AVMetadataMachineReadableCodeObject
-        if metadataObj.type == AVMetadataObjectTypeQRCode {
-            let barCodeObject = videoPreviewLayer?.transformedMetadataObjectForMetadataObject(metadataObj as AVMetadataMachineReadableCodeObject) as AVMetadataMachineReadableCodeObject
-            qrCodeFrameView?.frame = barCodeObject.bounds;
+        if supportedBarCodes.filter({ $0 == metadataObject.type }).count > 0 {
+            let barCodeObject = videoPreviewLayer?.transformedMetadataObjectForMetadataObject(metadataObject)
+            qrCodeFrameView?.frame = (barCodeObject as AVMetadataMachineReadableCodeObject).bounds;
             
-            if metadataObj.stringValue != nil {
-                messageLabel.text = metadataObj.stringValue
+            messageLabel.backgroundColor = UIColor.greenColor().colorWithAlphaComponent(0.9)
+            if metadataObject.stringValue != nil {
+                messageLabel.text = metadataObject.stringValue
             }
         }
     }
     
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

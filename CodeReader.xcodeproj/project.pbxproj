@@ -13,6 +13,7 @@
 		1138CDEA1A8F3B810039DC67 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1138CDE91A8F3B810039DC67 /* Images.xcassets */; };
 		1138CDED1A8F3B810039DC67 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1138CDEB1A8F3B810039DC67 /* LaunchScreen.xib */; };
 		1138CDF91A8F3B810039DC67 /* CodeReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1138CDF81A8F3B810039DC67 /* CodeReaderTests.swift */; };
+		1138CE031A8F547A0039DC67 /* CodeCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1138CE021A8F547A0039DC67 /* CodeCaptureSession.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		1138CDF21A8F3B810039DC67 /* CodeReaderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CodeReaderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1138CDF71A8F3B810039DC67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1138CDF81A8F3B810039DC67 /* CodeReaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeReaderTests.swift; sourceTree = "<group>"; };
+		1138CE021A8F547A0039DC67 /* CodeCaptureSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeCaptureSession.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 			children = (
 				1138CDE21A8F3B810039DC67 /* AppDelegate.swift */,
 				1138CDE41A8F3B810039DC67 /* ViewController.swift */,
+				1138CE021A8F547A0039DC67 /* CodeCaptureSession.swift */,
 				1138CDE61A8F3B810039DC67 /* Main.storyboard */,
 				1138CDE91A8F3B810039DC67 /* Images.xcassets */,
 				1138CDEB1A8F3B810039DC67 /* LaunchScreen.xib */,
@@ -212,6 +215,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1138CE031A8F547A0039DC67 /* CodeCaptureSession.swift in Sources */,
 				1138CDE51A8F3B810039DC67 /* ViewController.swift in Sources */,
 				1138CDE31A8F3B810039DC67 /* AppDelegate.swift in Sources */,
 			);
@@ -405,6 +409,7 @@
 				1138CDFE1A8F3B810039DC67 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1138CDFF1A8F3B810039DC67 /* Build configuration list for PBXNativeTarget "CodeReaderTests" */ = {
 			isa = XCConfigurationList;
@@ -413,6 +418,7 @@
 				1138CE011A8F3B810039DC67 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
