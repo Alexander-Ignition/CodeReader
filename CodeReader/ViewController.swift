@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 
-class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
+class ViewController: UIViewController {
     
     @IBOutlet weak var messageLabel: UILabel!
     
@@ -25,7 +25,8 @@ class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
         AVMetadataObjectTypeUPCECode,
         AVMetadataObjectTypePDF417Code,
         AVMetadataObjectTypeEAN13Code,
-        AVMetadataObjectTypeAztecCode
+        AVMetadataObjectTypeAztecCode,
+        AVMetadataObjectTypeDataMatrixCode
     ]
     
     override func viewDidLoad() {
@@ -64,17 +65,25 @@ class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
         view.addSubview(qrCodeFrameView!)
         view.bringSubviewToFront(qrCodeFrameView!)
     }
-
-    // MARK: - AVCaptureMetadataOutputObjectsDelegate
     
-    func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
-        
-        if isOutputMetadataObjects(metadataObjects) == true {
-//            println("metadataObjects \(metadataObjects.count)")
-            let metadataObject = metadataObjects[0] as AVMetadataMachineReadableCodeObject
-            outputMetadataObject(metadataObject)
-        }
+
+}
+
+// MARK: - AVCaptureMetadataOutputObjectsDelegate
+
+extension ViewController: AVCaptureMetadataOutputObjectsDelegate {
+    
+    func captureOutput(captureOutput: AVCaptureOutput!,
+        didOutputMetadataObjects metadataObjects: [AnyObject]!,
+        fromConnection connection: AVCaptureConnection!) {
+            
+            if isOutputMetadataObjects(metadataObjects) == true {
+                let metadataObject = metadataObjects[0] as! AVMetadataMachineReadableCodeObject
+                outputMetadataObject(metadataObject)
+            }
     }
+    
+    // MARK: - helpers
     
     func isOutputMetadataObjects(metadataObjects: [AnyObject]!) -> Bool {
         if metadataObjects != nil && metadataObjects.count > 0 {
@@ -92,7 +101,7 @@ class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
         
         if supportedBarCodes.filter({ $0 == metadataObject.type }).count > 0 {
             let barCodeObject = videoPreviewLayer?.transformedMetadataObjectForMetadataObject(metadataObject)
-            qrCodeFrameView?.frame = (barCodeObject as AVMetadataMachineReadableCodeObject).bounds;
+            qrCodeFrameView?.frame = (barCodeObject as! AVMetadataMachineReadableCodeObject).bounds;
             
             messageLabel.backgroundColor = UIColor.greenColor().colorWithAlphaComponent(0.9)
             if metadataObject.stringValue != nil {
@@ -101,7 +110,7 @@ class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
         }
     }
     
-
+    
 }
 
 
